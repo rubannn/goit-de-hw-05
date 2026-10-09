@@ -1,8 +1,7 @@
-import json
-
 from kafka import KafkaConsumer
 
 from configs import kafka_config, TEMPERATURE_ALERTS_TOPIC, HUMIDITY_ALERTS_TOPIC
+from serializers import JSONDeserializer
 
 # Створення Kafka Consumer
 consumer = KafkaConsumer(
@@ -11,7 +10,7 @@ consumer = KafkaConsumer(
     sasl_mechanism=kafka_config["sasl_mechanism"],
     sasl_plain_username=kafka_config["username"],
     sasl_plain_password=kafka_config["password"],
-    value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+    value_deserializer=JSONDeserializer(),
     auto_offset_reset="earliest",  # Зчитування повідомлень з початку
     enable_auto_commit=True,  # Автоматичне підтвердження зчитаних повідомлень
     group_id="alerts_display_group",  # Ідентифікатор групи споживачів

@@ -1,4 +1,3 @@
-import json
 import time
 
 from kafka import KafkaConsumer, KafkaProducer
@@ -9,6 +8,7 @@ from configs import (
     TEMPERATURE_ALERTS_TOPIC,
     HUMIDITY_ALERTS_TOPIC,
 )
+from serializers import JSONDeserializer, JSONSerializer, StringSerializer
 
 TEMPERATURE_THRESHOLD = 40
 HUMIDITY_LOWER_THRESHOLD = 20
@@ -20,7 +20,7 @@ consumer = KafkaConsumer(
     sasl_mechanism=kafka_config["sasl_mechanism"],
     sasl_plain_username=kafka_config["username"],
     sasl_plain_password=kafka_config["password"],
-    value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+    value_deserializer=JSONDeserializer(),
     auto_offset_reset="earliest",
     enable_auto_commit=True,
     group_id="alert_processor_group",
@@ -32,8 +32,8 @@ producer = KafkaProducer(
     sasl_mechanism=kafka_config["sasl_mechanism"],
     sasl_plain_username=kafka_config["username"],
     sasl_plain_password=kafka_config["password"],
-    value_serializer=lambda v: json.dumps(v).encode("utf-8"),
-    key_serializer=lambda v: str(v).encode("utf-8"),
+    value_serializer=JSONSerializer(),
+    key_serializer=StringSerializer(),
 )
 
 consumer.subscribe([BUILDING_SENSORS_TOPIC])

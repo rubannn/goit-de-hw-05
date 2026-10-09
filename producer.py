@@ -1,10 +1,10 @@
-import json
 import random
 import time
 
 from kafka import KafkaProducer
 
 from configs import kafka_config, BUILDING_SENSORS_TOPIC
+from serializers import JSONSerializer, StringSerializer
 
 # Створення Kafka Producer
 producer = KafkaProducer(
@@ -13,8 +13,8 @@ producer = KafkaProducer(
     sasl_mechanism=kafka_config["sasl_mechanism"],
     sasl_plain_username=kafka_config["username"],
     sasl_plain_password=kafka_config["password"],
-    value_serializer=lambda v: json.dumps(v).encode("utf-8"),
-    key_serializer=lambda v: str(v).encode("utf-8"),
+    value_serializer=JSONSerializer(),
+    key_serializer=StringSerializer(),
 )
 
 # Один запуск скрипту імітує один датчик з постійним ID на час роботи
