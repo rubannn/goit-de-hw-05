@@ -1,5 +1,3 @@
-import time
-
 from kafka import KafkaConsumer, KafkaProducer
 
 from configs import (
@@ -44,6 +42,7 @@ try:
     for message in consumer:
         data = message.value
         sensor_id = data["sensor_id"]
+        measured_at = data["timestamp"]
         temperature = data["temperature"]
         humidity = data["humidity"]
         print(f"Received data from sensor {sensor_id}: {data}")
@@ -59,7 +58,7 @@ try:
             alert = {
                 "sensor_id": sensor_id,
                 "temperature": temperature,
-                "timestamp": time.time(),
+                "timestamp": measured_at,
                 "message": f"Temperature {temperature}C exceeds threshold {TEMPERATURE_THRESHOLD}C",
             }
             producer.send(TEMPERATURE_ALERTS_TOPIC, key=sensor_id, value=alert)
@@ -70,7 +69,7 @@ try:
             alert = {
                 "sensor_id": sensor_id,
                 "humidity": humidity,
-                "timestamp": time.time(),
+                "timestamp": measured_at,
                 "message": f"Humidity {humidity}% is out of range "
                 f"({HUMIDITY_LOWER_THRESHOLD}-{HUMIDITY_UPPER_THRESHOLD}%)",
             }
