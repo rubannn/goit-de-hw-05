@@ -21,9 +21,9 @@ consumer = KafkaConsumer(
     sasl_plain_username=kafka_config["username"],
     sasl_plain_password=kafka_config["password"],
     value_deserializer=JSONDeserializer(),
-    auto_offset_reset="earliest",
+    auto_offset_reset="latest",
     enable_auto_commit=True,
-    group_id="alert_processor_group",
+    group_id="alert_processor_group_v2",
 )
 
 producer = KafkaProducer(
